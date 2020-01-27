@@ -1,27 +1,88 @@
 <template>
   <!-- 容器 -->
-  <div class="grid-container" :class="isLattice ? 'lattice' : ''" @mousewheel="handleZoom(this)">
-    <!-- 刻度尺 -->
-    <GridRuler :vertical="false" :width="ruler.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="scale" @onLineChange="handleLineChange" />
-    <GridRuler :vertical="true" :width="ruler.thick" :height="ruler.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="scale" @onLineChange="handleLineChange" />
-    <a class="corner">@</a>
-    <!-- 刻度尺END -->
-    <!-- 画布 -->
-    <div :style="style" class="grid-canvas" ref="canvasRef">
-      <slot :zoom="scale"></slot>
+  <div class="grid-box">
+    <div class="grid-header">
+      <el-tooltip class="item" effect="dark" content="保存" placement="bottom">
+        <el-button size="mini" icon="el-icon-edit"></el-button>
+      </el-tooltip>
+      <el-button-group class="grid-tools">
+        <el-tooltip class="item" effect="dark" content="撤销" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="重做" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+      </el-button-group>
+      <el-button-group class="grid-tools">
+        <el-tooltip class="item" effect="dark" content="上移" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="下移" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="置顶" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="置底" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+      </el-button-group>
+      <el-button-group class="grid-tools">
+        <el-tooltip class="item" effect="dark" content="Bottom Center 提示文字" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="Bottom Center 提示文字" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="Bottom Center 提示文字" placement="bottom">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </el-tooltip>
+      </el-button-group>
     </div>
-    <!-- 画布END -->
-    <!--辅助线-->
-    <span class="ref-line v-line" v-for="item in vLine" :key="item.position + item.origin" v-show="item.display" :style="{ left: item.position, top: item.origin, height: item.lineLength}" />
-    <span class="ref-line h-line" v-for="item in hLine" :key="item.position + item.origin" v-show="item.display" :style="{ top: item.position, left: item.origin, width: item.lineLength}" />
-    <!--辅助线END-->
+    <div class="grid-container" :class="isLattice ? 'lattice' : ''">
+      <!-- 刻度尺 -->
+      <GridRuler :vertical="false" :width="ruler.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="zoom" />
+      <GridRuler :vertical="true" :width="ruler.thick" :height="ruler.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="zoom" />
+      <a class="corner" @click="ruler.isShowReferLine = !ruler.isShowReferLine">@</a>
+      <!-- 刻度尺END -->
+      <!-- 画布 -->
+      <div :style="style" class="grid-canvas" ref="canvasRef" @contextmenu.prevent="rightClick">
+        <slot :zoom="zoom"></slot>
+      </div>
+      <!-- 画布END -->
+      <!-- 右键菜单 -->
+      <div class="right-menu" style="top: 200px;right: 200px;">
+        <div v-if="clickItem">
+          <div class="right-menu-item"><span class="menu-item-left">复制</span><span class="menu-item-right">Ctrl + C</span></div>
+          <div class="right-menu-item"><span class="menu-item-left">粘贴</span><span class="menu-item-right">Ctrl + V</span></div>
+          <div class="right-menu-item"><span class="menu-item-left">剪切</span><span class="menu-item-right">Ctrl + X</span></div>
+          <div class="right-menu-item"><span class="menu-item-left">删除</span><span class="menu-item-right">Ctrl + Del</span></div>
+        </div>
+        <div v-else>
+          <div class="right-menu-item"><span class="menu-item-left">粘贴到当前位置</span><span class="menu-item-right">Ctrl + Shift + C</span></div>
+          <div class="right-menu-item"><span class="menu-item-left">粘贴</span><span class="menu-item-right">Ctrl + C</span></div>
+        </div>
+      </div>
+      <!-- 右键菜单END -->
+      <!--辅助线-->
+      <span class="ref-line v-line" v-for="item in vLine" :key="item.position + item.origin" v-show="item.display" :style="{ left: item.position, top: item.origin, height: item.lineLength}" />
+      <span class="ref-line h-line" v-for="item in hLine" :key="item.position + item.origin" v-show="item.display" :style="{ top: item.position, left: item.origin, width: item.lineLength}" />
+      <!--辅助线END-->
+    </div>
+    <div class="grid-footer">
+      <!-- <div>
+        <span>0</span>
+        <el-slider v-model="zoom" size="small"></el-slider>
+        <span>200%</span>
+      </div> -->
+    </div>
   </div>
 </template>
 
 <script>
 import GridRuler from './ruler/GridRuler.vue'
 export default {
-  name: 'grid-layout',
+  name: 'GridLayout',
   components: { GridRuler },
   props: {
     // 画布样式
@@ -51,6 +112,7 @@ export default {
   },
   data () {
     return {
+      clickItem: true,
       zoom: this.scale,
       vLine: [],
       hLine: [],
@@ -69,30 +131,103 @@ export default {
   computed: {
     style () {
       return {
-        transform: `scale(${this.scale}) translate(${0}px, ${0}px)`,
+        transform: `scale(${this.scale}) translate(60px, 60px)`,
         ...this.canvasStyle
       }
     }
   },
   watch: {},
   methods: {
-    handleZoom () {
-      /* 获取当前页面的缩放比,若未设置scale缩放比，则为默认100%，即1，原图大小 */
-      /* event.wheelDelta 获取滚轮滚动值并将滚动值叠加给缩放比zoom wheelDelta统一为±120，其中正数表示为向上滚动，负数表示向下滚动   */
-      // let scale = this.scale
-      // scale += +(event.wheelDelta / 1200).toFixed(1)
-      // console.log(scale)
-      // if (scale >= 0.5 && scale <= 3) {
-      //   this.zoom = scale
-      //   this.$emit('scaleChange', scale)
-      // }
-    },
-    handleLineChange (arr, vertical) {
-      const newLines = vertical
-        ? { h: this.horLineArr, v: [...arr] }
-        : { h: [...arr], v: this.verLineArr }
-      this.$emit('handleLine', newLines)
+    rightClick (e) {
+      console.log(e)
     }
   }
 }
 </script>
+<style lang="sass">
+/* 容器 */
+.grid-box
+  height: 100%
+  display: flex
+  flex-flow: column
+  .grid-header
+    display: flex
+    // justify-content: space-between
+    -webkit-box-align: center
+    -ms-flex-align: center
+    align-items: center
+    height: 40px
+    border-bottom: 1px solid #e5e5e5
+    box-shadow: 0px 1px 6px 0 rgba(89, 91, 94, 0.12)
+    z-index: 100
+    .grid-tools
+      margin-left: 10px
+  .grid-container
+    width: 100%
+    height: 100%
+    overflow: hidden
+    position: relative
+    /* 画布区域 */
+    .grid-canvas
+      position: absolute
+      transform-origin: 0 0
+      transition: 0.2s all ease-in-out
+      background-size: cover, contain
+      background-position: center, right bottom
+      background-repeat: no-repeat, no-repeat
+      box-shadow: rgba(0, 0, 0, 0.5) 0 0 30px 0
+    /* 尺子左上操作 */
+    .corner
+      position: absolute
+      left: 0
+      top: 0
+      pointer-events: auto
+      cursor: pointer
+      transition: all 0.2s ease-in-out
+      box-sizing: content-box
+      background-color: #ccc
+    .right-menu
+      width: 200px
+      position: absolute
+      background-color: #fff
+      transition: all .8s ease-in-out
+      background: #fff
+      z-index: 999
+      border: 1px solid #eee
+      box-shadow: 0 0.5em 1em 0 rgba(0,0,0,.1)
+      border-radius: 1px
+      font-size: 10px
+      .right-menu-item
+        user-select: none
+        display: -ms-flexbox
+        display: -webkit-flex
+        -ms-flex-pack: distribute
+        justify-content: space-around
+        -webkit-box-align: center
+        -ms-flex-align: center
+        align-items: center
+        height: 28px
+        color: #1a1a1a
+        line-height: 28px
+        padding: 0 5px
+        cursor: pointer
+        &:hover
+          background: #409eff
+          color: #fff
+        .menu-item-left
+          width:90px
+          text-align: left
+        .menu-item-right
+          width:90px
+          text-align: right
+  .grid-footer
+    height: 30px
+    border-top: 1px solid #e5e5e5
+    box-shadow: 0px -1px 6px 0 rgba(89, 91, 94, 0.12)
+    z-index: 100
+  /* 背景点阵图 */
+  .lattice
+    background-image: linear-gradient(45deg, #f5f5f5 25%, transparent 0, transparent 75%, #f5f5f5 0), linear-gradient(45deg, #f5f5f5 25%, transparent 0, transparent 75%, #f5f5f5 0)
+    background-position: 0 0, 10px 10px
+    background-size: 20px 20px
+</style>

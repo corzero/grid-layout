@@ -1,58 +1,8 @@
-/* 容器 */
-.grid-container {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-/* 背景点阵图 */
-.lattice {
-  /* background: #2a2e33;
-  background-image: linear-gradient(#2a2e33 9px, transparent 0),
-    linear-gradient(90deg, #4a545b 1px, transparent 0);
-  background-size: 10px 10px, 10px 10px; */
-  background-image: linear-gradient(
-      45deg,
-      #f5f5f5 25%,
-      transparent 0,
-      transparent 75%,
-      #f5f5f5 0
-    ),
-    linear-gradient(
-      45deg,
-      #f5f5f5 25%,
-      transparent 0,
-      transparent 75%,
-      #f5f5f5 0
-    );
-  background-position: 0 0, 10px 10px;
-  background-size: 20px 20px;
-}
-/* 画布区域 */
-.grid-canvas {
-  position: absolute;
-  transform-origin: 0 0;
-  top: 60px;
-  left: 60px;
-  transition: 0.2s all ease-in-out;
-  background-size: cover, contain;
-  background-position: center, right bottom;
-  background-repeat: no-repeat, no-repeat;
-  box-shadow: rgba(0, 0, 0, 0.5) 0 0 30px 0;
-}
-/* 尺子左上操作 */
-.corner {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: auto;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-sizing: content-box;
-  background-color: #ccc;
-  /* // &.active {
-  //     background-color: ${props => props.cornerActiveColor} !important;
-  // } */
+* {
+  padding: 0;
+  margin: 0;
+  color: #555555;
+  text-decoration: none;
 }
 .vdr {
   touch-action: none;

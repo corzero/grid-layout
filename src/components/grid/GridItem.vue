@@ -5,7 +5,7 @@
       'resizing': resizing,
       'draggable': draggable,
       'resizable': resizable
-    }, className]" @mousedown="elementDown" @touchstart="elementTouchDown" :tabindex="tabindex">
+    }, className]" @mousedown="elementDown" @touchstart="elementTouchDown" tabindex="0">
     <!-- 句柄 -->
     <div v-for="handle in actualHandles" :key="handle" :class="['handle', 'handle-' + handle]" :style="{display: enabled ? 'block' : 'none'}" @mousedown.stop.prevent="handleDown(handle, $event)" @touchstart.stop.prevent="handleTouchDown(handle, $event)">
       <slot :name="handle"></slot>
@@ -49,37 +49,12 @@ let eventsFor = events.mouse
 
 export default {
   replace: true,
-  name: 'gridItem',
+  name: 'GridItem',
   props: {
-    tabindex: [String, Number],
     className: {
       type: String,
       default: 'vdr'
     },
-    // classNameDraggable: {
-    //   type: String,
-    //   default: 'draggable'
-    // },
-    // classNameResizable: {
-    //   type: String,
-    //   default: 'resizable'
-    // },
-    // classNameDragging: {
-    //   type: String,
-    //   default: 'dragging'
-    // },
-    // classNameResizing: {
-    //   type: String,
-    //   default: 'resizing'
-    // },
-    // classNameActive: {
-    //   type: String,
-    //   default: 'active'
-    // },
-    // classNameHandle: {
-    //   type: String,
-    //   default: 'handle'
-    // },
     disableUserSelect: {
       type: Boolean,
       default: true

@@ -69,18 +69,6 @@ export default {
         }
       }
     },
-    horLineArr: {
-      type: Array,
-      default: () => {
-        return [100, 200]
-      }
-    },
-    verLineArr: {
-      type: Array,
-      default: () => {
-        return [100, 200]
-      }
-    },
     start: {
       type: Number,
       default: 0
@@ -270,24 +258,26 @@ export default {
       }
     },
     handleClick (e) {
-      const offset = this.vertical ? e.offsetY : e.offsetX
-      const value = getValueByOffset(offset, this.start, this.scale)
-      this.lines.push(value)
-      this.$emit('onLineChange', this.lines, this.vertical)
+      if (this.isShowReferLine) {
+        const offset = this.vertical ? e.offsetY : e.offsetX
+        const value = getValueByOffset(offset, this.start, this.scale)
+        this.lines.push(value)
+        this.$emit('onLineChange', this.lines, this.vertical)
+      }
     },
     handleEnter (e) {
-      console.log(`22222222`, e)
       // 获取当前鼠标坐标
-      let offset = this.vertical ? e.offsetY : e.offsetX
-      const value = getValueByOffset(offset, this.start, this.scale)
-      if (!this.isDraggingLine) {
-        this.showIndicator = true
-        this.value = value
+      if (this.isShowReferLine) {
+        let offset = this.vertical ? e.offsetY : e.offsetX
+        const value = getValueByOffset(offset, this.start, this.scale)
+        if (!this.isDraggingLine) {
+          this.showIndicator = true
+          this.value = value
+        }
       }
     },
     handleMove (e) {
       let offset = this.vertical ? e.offsetY : e.offsetX
-      console.log(`11111111111`, offset)
       const value = getValueByOffset(offset, this.start, this.scale)
       if (this.showIndicator) {
         this.value = value
