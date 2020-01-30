@@ -8,7 +8,6 @@
     }, className]" @mousedown="elementDown" @touchstart="elementTouchDown" tabindex="0">
     <!-- 句柄 -->
     <div v-for="handle in actualHandles" :key="handle" :class="['handle', 'handle-' + handle]" :style="{display: enabled ? 'block' : 'none'}" @mousedown.stop.prevent="handleDown(handle, $event)" @touchstart.stop.prevent="handleTouchDown(handle, $event)">
-      <slot :name="handle"></slot>
     </div>
     <slot></slot>
   </div>
@@ -141,14 +140,6 @@ export default {
       default: 'auto',
       validator: (val) => (typeof val === 'string' ? val === 'auto' : val >= 0)
     },
-    // handles: {
-    //   type: Array,
-    //   default: () => ['tl', 'tm', 'tr', 'mr', 'br', 'bm', 'bl', 'ml', 'rot'],
-    //   validator: (val) => {
-    //     const s = new Set(['tl', 'tm', 'tr', 'mr', 'br', 'bm', 'bl', 'ml', 'rot'])
-    //     return new Set(val.filter(h => s.has(h))).size === val.length
-    //   }
-    // },
     dragHandle: {
       type: String,
       default: null
@@ -417,8 +408,6 @@ export default {
 
       if (e.stopPropagation) e.stopPropagation()
 
-      // Here we avoid a dangerous recursion by faking
-      // corner handles as middle handles
       if (this.lockAspectRatio && !handle.includes('m')) {
         this.handle = 'm' + handle.substring(1)
       } else {
@@ -577,7 +566,7 @@ export default {
       const tmpDeltaY = mouseClickPosition.mouseY - (e.touches ? e.touches[0].pageY : e.pageY)
 
       const [deltaX, deltaY] = this.snapToGrid(this.grid, tmpDeltaX, tmpDeltaY)
-      // console.log(deltaX, deltaY, mouseClickPosition)
+      console.log(deltaX, deltaY, mouseClickPosition)
       if (handle === 'rot') {
         const angle = Math.round(Math.atan2(-deltaY, -deltaX) / Math.PI * 180)
         console.log(angle)
@@ -594,7 +583,6 @@ export default {
           this.rawLeft = mouseClickPosition.left - deltaX
         }
       }
-      console.log(this.rawTop, this.rawRight, this.rawBottom, this.rawLeft)
       this.$emit('resizing', this.left, this.top, this.width, this.height, this.angle)
     },
     // 从控制柄松开
@@ -908,38 +896,6 @@ export default {
         this.$emit('deactivated')
       }
     },
-    x () {
-      if (this.resizing || this.dragging) {
-        return
-      }
-
-      if (this.parent) {
-        this.bounds = this.calcDragLimits()
-      }
-
-      const delta = this.x - this.left
-
-      if (delta % this.grid[0] === 0) {
-        this.rawLeft = this.x
-        this.rawRight = this.right - delta
-      }
-    },
-    y () {
-      if (this.resizing || this.dragging) {
-        return
-      }
-
-      if (this.parent) {
-        this.bounds = this.calcDragLimits()
-      }
-
-      const delta = this.y - this.top
-
-      if (delta % this.grid[1] === 0) {
-        this.rawTop = this.y
-        this.rawBottom = this.bottom - delta
-      }
-    },
     z (val) {
       if (val >= 0 || val === 'auto') {
         this.zIndex = val
@@ -1020,6 +976,38 @@ export default {
       }
 
       this.bottom = newBottom
+    },
+    x () {
+      if (this.resizing || this.dragging) {
+        return
+      }
+
+      if (this.parent) {
+        this.bounds = this.calcDragLimits()
+      }
+
+      const delta = this.x - this.left
+
+      if (delta % this.grid[0] === 0) {
+        this.rawLeft = this.x
+        this.rawRight = this.right - delta
+      }
+    },
+    y () {
+      if (this.resizing || this.dragging) {
+        return
+      }
+
+      if (this.parent) {
+        this.bounds = this.calcDragLimits()
+      }
+
+      const delta = this.y - this.top
+
+      if (delta % this.grid[1] === 0) {
+        this.rawTop = this.y
+        this.rawBottom = this.bottom - delta
+      }
     },
     lockAspectRatio (val) {
       if (val) {

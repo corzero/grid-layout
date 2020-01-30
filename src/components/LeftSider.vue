@@ -32,5 +32,5 @@ export default {
 <style lang="sass">
 .left-sider-tabs
   .el-tabs__nav-scroll
-    height: calc(100vh - 30px)
+    height: calc(100vh - 72px)
 </style>

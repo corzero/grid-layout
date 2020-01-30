@@ -39,26 +39,27 @@
         </el-tooltip>
       </el-button-group>
     </div>
-    <div class="grid-container" :class="isLattice ? 'lattice' : ''">
+    <div class="grid-container" :class="isLattice ? 'lattice' : ''" @contextmenu.prevent="rightClick">
       <!-- 刻度尺 -->
       <GridRuler :vertical="false" :width="ruler.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="zoom" />
       <GridRuler :vertical="true" :width="ruler.thick" :height="ruler.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="zoom" />
       <a class="corner" @click="ruler.isShowReferLine = !ruler.isShowReferLine">@</a>
       <!-- 刻度尺END -->
       <!-- 画布 -->
-      <div :style="style" class="grid-canvas" ref="canvasRef" @contextmenu.prevent="rightClick">
+      <div :style="style" class="grid-canvas" ref="canvasRef">
         <slot :zoom="zoom"></slot>
       </div>
       <!-- 画布END -->
       <!-- 右键菜单 -->
-      <div class="right-menu" style="top: 200px;right: 200px;">
-        <div v-if="clickItem">
+      <div v-show="rightMenu.show" class="right-menu" :style="{transform:`translate(${rightMenu.offsetXY})`}">
+        <div v-show="rightMenu.show == 'item'">
           <div class="right-menu-item"><span class="menu-item-left">复制</span><span class="menu-item-right">Ctrl + C</span></div>
           <div class="right-menu-item"><span class="menu-item-left">粘贴</span><span class="menu-item-right">Ctrl + V</span></div>
           <div class="right-menu-item"><span class="menu-item-left">剪切</span><span class="menu-item-right">Ctrl + X</span></div>
           <div class="right-menu-item"><span class="menu-item-left">删除</span><span class="menu-item-right">Ctrl + Del</span></div>
+          <div class="right-menu-item"><span class="menu-item-left">锁定/解锁</span><span class="menu-item-right">Ctrl + L</span></div>
         </div>
-        <div v-else>
+        <div v-show="rightMenu.show == 'canvas'">
           <div class="right-menu-item"><span class="menu-item-left">粘贴到当前位置</span><span class="menu-item-right">Ctrl + Shift + C</span></div>
           <div class="right-menu-item"><span class="menu-item-left">粘贴</span><span class="menu-item-right">Ctrl + C</span></div>
         </div>
@@ -70,11 +71,17 @@
       <!--辅助线END-->
     </div>
     <div class="grid-footer">
-      <!-- <div>
-        <span>0</span>
-        <el-slider v-model="zoom" size="small"></el-slider>
-        <span>200%</span>
-      </div> -->
+      <div class="left-tool" @click="$emit('toggleShow','left')">
+        <i class="el-icon-s-grid" style="text-align: center;font-size: 18px;width: 30px" />
+      </div>
+      <div class="grid-resize">
+        <span>0.5</span>
+        <el-slider v-model="zoom" :min="0.5" :max="1.5" :step="0.1" style="width: 200px;margin: 0 15px;"></el-slider>
+        <span>1.5%</span>
+      </div>
+      <div class="right-tool" @click="$emit('toggleShow','right')">
+        <i class="el-icon-setting" style="text-align: center;font-size: 18px;width: 30px" />
+      </div>
     </div>
   </div>
 </template>
@@ -112,7 +119,10 @@ export default {
   },
   data () {
     return {
-      clickItem: true,
+      rightMenu: {
+        show: null,
+        offsetXY: '0px, 0px'
+      },
       zoom: this.scale,
       vLine: [],
       hLine: [],
@@ -131,7 +141,7 @@ export default {
   computed: {
     style () {
       return {
-        transform: `scale(${this.scale}) translate(60px, 60px)`,
+        transform: `scale(${this.zoom}) translate(60px, 60px)`,
         ...this.canvasStyle
       }
     }
@@ -139,6 +149,18 @@ export default {
   watch: {},
   methods: {
     rightClick (e) {
+      // 点击item
+      if (e.toElement._prevClass.includes('draggable')) {
+        this.rightMenu = {
+          show: 'item',
+          offsetXY: `${e.layerX}px,${e.layerY}px`
+        }
+      } else {
+        this.rightMenu = {
+          show: 'canvas',
+          offsetXY: `${e.layerX}px,${e.layerY}px`
+        }
+      }
       console.log(e)
     }
   }
@@ -150,7 +172,9 @@ export default {
   height: 100%
   display: flex
   flex-flow: column
+  position: relative
   .grid-header
+    padding:0 10px
     display: flex
     // justify-content: space-between
     -webkit-box-align: center
@@ -225,6 +249,29 @@ export default {
     border-top: 1px solid #e5e5e5
     box-shadow: 0px -1px 6px 0 rgba(89, 91, 94, 0.12)
     z-index: 100
+    display: flex
+    -webkit-box-pack: justify
+    justify-content: space-between
+    align-items: center
+    .left-tool
+      cursor: pointer
+      display: flex
+      align-items: center
+      border-right: 1px solid #c8cdd0
+    .right-tool
+      cursor: pointer
+      display: flex
+      align-items: center
+      border-left: 1px solid #c8cdd0
+    .grid-resize
+      display: flex
+      justify-content: center
+      align-items: center
+    .el-slider__runway
+      margin: 0
+    .el-slider__button
+      width: 10px
+      height:10px
   /* 背景点阵图 */
   .lattice
     background-image: linear-gradient(45deg, #f5f5f5 25%, transparent 0, transparent 75%, #f5f5f5 0), linear-gradient(45deg, #f5f5f5 25%, transparent 0, transparent 75%, #f5f5f5 0)
