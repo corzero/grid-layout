@@ -39,19 +39,21 @@
         </el-tooltip>
       </el-button-group>
     </div>
-    <div class="grid-container" :class="isLattice ? 'lattice' : ''" @contextmenu.prevent="rightClick">
+    <div class="grid-container" :class="isLattice ? 'lattice' : ''" @contextmenu.prevent="rightClick" @dragover="dragOver($event)" @drop="dropEnd($event)">
       <!-- 刻度尺 -->
-      <GridRuler :vertical="false" :width="ruler.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="zoom" />
-      <GridRuler :vertical="true" :width="ruler.thick" :height="ruler.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="zoom" />
-      <a class="corner" @click="ruler.isShowReferLine = !ruler.isShowReferLine">@</a>
+      <GridRuler :vertical="false" :width="canvasConf.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="zoom" />
+      <GridRuler :vertical="true" :width="ruler.thick" :height="canvasConf.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="zoom" />
+      <a class="corner" @click="ruler.isShowReferLine = !ruler.isShowReferLine"><i class="el-icon-view" /></a>
       <!-- 刻度尺END -->
       <!-- 画布 -->
       <div :style="style" class="grid-canvas" ref="canvasRef">
-        <slot :zoom="zoom"></slot>
+        <gridItem v-for="e in itemList" :key="e.uid" :id="e.uid" :x="e.x" :y="e.y" :z="e.z" :w="e.w" :h="e.h" :zoom="scale" :active="active==e.uid" :parent="false" :debug="false" :min-width="200" :min-height="200" :isConflictCheck="false" :snap="false" :snapTolerance="10" @activated="onActivated" @deactivated="onDeactivated" @dragging="onDragging" @resizing="onResizing">
+          <component :is="e.widgetName" />
+        </gridItem>
       </div>
       <!-- 画布END -->
       <!-- 右键菜单 -->
-      <div v-show="rightMenu.show" class="right-menu" :style="{transform:`translate(${rightMenu.offsetXY})`}">
+      <div v-if="rightMenu.show" class="right-menu" :style="{transform:`translate(${rightMenu.offsetXY})`}">
         <div v-show="rightMenu.show == 'item'">
           <div class="right-menu-item"><span class="menu-item-left">复制</span><span class="menu-item-right">Ctrl + C</span></div>
           <div class="right-menu-item"><span class="menu-item-left">粘贴</span><span class="menu-item-right">Ctrl + V</span></div>
@@ -87,20 +89,32 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import GridRuler from './ruler/GridRuler.vue'
+import gridItem from '@/components/grid/GridItem.vue'
+const comps = require.context('../widget', false, /\.vue$/)
+const widgetList = comps.keys().reduce((prev, cur) => {
+  const compTemp = comps(cur)
+  const comp = compTemp.default || compTemp
+  prev[comp.name] = comp
+  return prev
+}, {})
 export default {
   name: 'GridLayout',
-  components: { GridRuler },
+  components: { GridRuler, gridItem, ...widgetList },
   props: {
+    itemList: {
+      type: Array,
+      default: () => []
+    },
     // 画布样式
-    canvasStyle: {
+    canvasConf: {
       type: Object,
       default: () => {
         return {
           backgroundColor: '#fff',
-          width: '1920px',
-          height: '1080px',
-          border: '1px solid #ccc'
+          width: 1920,
+          height: 1080
         }
       }
     },
@@ -119,6 +133,7 @@ export default {
   },
   data () {
     return {
+      active: null,
       rightMenu: {
         show: null,
         offsetXY: '0px, 0px'
@@ -140,15 +155,38 @@ export default {
   },
   computed: {
     style () {
+      let { ...canvasConf } = this.canvasConf
+      canvasConf.width = canvasConf.width + 'px'
+      canvasConf.height = canvasConf.height + 'px'
       return {
         transform: `scale(${this.zoom}) translate(60px, 60px)`,
-        ...this.canvasStyle
+        ...canvasConf
       }
     }
   },
   watch: {},
   methods: {
+    onActivated (id) {
+      if (!this.active) {
+        this.active = id
+        console.log('hhh', id)
+      }
+    },
+    onDeactivated () {
+      this.active = null
+      this.rightMenu = {
+        show: null,
+        offsetXY: '0px, 0px'
+      }
+    },
+    onDragging: debounce(function (position) {
+      this.$emit('updateConfig', position)
+    }, 1000),
+    onResizing: debounce(function (size) {
+      this.$emit('updateConfig', size)
+    }, 1000),
     rightClick (e) {
+      console.log(e)
       // 点击item
       if (e.toElement._prevClass.includes('draggable')) {
         this.rightMenu = {
@@ -162,6 +200,13 @@ export default {
         }
       }
       console.log(e)
+    },
+    dropEnd (e) {
+      const type = e.dataTransfer.getData('name')
+      console.log('drop', e, type)
+    },
+    dragOver (e) {
+      e.preventDefault()
     }
   }
 }
@@ -189,7 +234,7 @@ export default {
   .grid-container
     width: 100%
     height: 100%
-    overflow: hidden
+    overflow: auto
     position: relative
     /* 画布区域 */
     .grid-canvas
@@ -211,10 +256,10 @@ export default {
       box-sizing: content-box
       background-color: #ccc
     .right-menu
-      width: 200px
+      width: 220px
       position: absolute
       background-color: #fff
-      transition: all .8s ease-in-out
+      // transition: all .8s ease-in-out
       background: #fff
       z-index: 999
       border: 1px solid #eee
@@ -239,10 +284,10 @@ export default {
           background: #409eff
           color: #fff
         .menu-item-left
-          width:90px
+          width:100px
           text-align: left
         .menu-item-right
-          width:90px
+          width:100px
           text-align: right
   .grid-footer
     height: 30px

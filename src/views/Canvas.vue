@@ -7,13 +7,9 @@
       <transition name="left-sider">
         <LeftSider class="canvas-left-sider" v-show="showLeft" />
       </transition>
-      <gridLayout class="canvas-console" :isLattice="isLattice" :scale="scale" @keyup.ctrl="onCtrlClick" @scaleChange="scaleChange" @toggleShow="toggleShow">
-        <gridItem v-for="e in itemArray" :key="e.uid" :id="e.uid" :x="e.x" :y="e.y" :w="e.w" :h="e.h" :zoom="scale" :active="active==e.uid" :parent="false" :debug="false" :min-width="200" :min-height="200" :isConflictCheck="false" :snap="false" :snapTolerance="10" @activated="onActivated" @deactivated="active = null" @dragging="onDragging">
-          当前组件id{{e.uid}}
-        </gridItem>
-      </gridLayout>
+      <gridLayout class="canvas-console" :canvasConf="canvas" :itemList="widget" @keyup.ctrl="onCtrlClick" @scaleChange="scaleChange" @toggleShow="toggleShow" @updateConfig="updateWidget" />
       <transition name="right-sider">
-        <RightSider class="canvas-right-sider" v-show="showRight"></RightSider>
+        <component :is="rightTool" class="canvas-right-sider" v-show="showRight" />
       </transition>
     </div>
   </div>
@@ -23,60 +19,43 @@
 import '@/components/grid/layout.css'
 import { createNamespacedHelpers } from 'vuex'
 import gridLayout from '@/components/grid/GridLayout.vue'
-import gridItem from '@/components/grid/GridItem.vue'
 import LeftSider from '@/components/LeftSider.vue'
-import RightSider from '@/components/RightSider.vue'
+import GlobalConfig from '@/components/GlobalConfig.vue'
 const {
   mapState,
   mapGetters,
   mapMutations,
   mapActions
-} = createNamespacedHelpers('view')
+} = createNamespacedHelpers('dashboard')
 export default {
   name: 'Canvas',
   components: {
     gridLayout,
-    gridItem,
     LeftSider,
-    RightSider
+    GlobalConfig
   },
   data () {
     return {
-      // 辅助
-      showLeft: false,
-      showRight: false,
+      // 辅助(不存store)
+      showLeft: true,
+      showRight: true,
+      rightTool: 'GlobalConfig',
       scale: 0.8,
       isLattice: true,
-      itemArray: [
-        { x: 0, y: 0, z: 1, w: 200, h: 200, class: 'test1', uid: Math.random() * 100 },
-        { x: 210, y: 0, z: 1, w: 200, h: 200, class: 'test2', uid: Math.random() * 100 },
-        { x: 420, y: 0, z: 1, w: 200, h: 200, class: 'test3', uid: Math.random() * 100 }
-      ],
       active: null
     }
   },
+  created () {
+  },
   computed: {
-    ...mapState([]),
-    ...mapGetters([])
+    ...mapState(['widget', 'global']),
+    ...mapGetters(['canvas'])
   },
   methods: {
-    ...mapMutations([]),
+    ...mapMutations(['updateWidget']),
     ...mapActions([]),
-    onActivated (id) {
-      if (!this.active) {
-        this.active = id
-        console.log('hhh', id)
-      }
-    },
     onCtrlClick (e) {
-      console.log(e)
-      if (this.active) {
-        console.log('111111111')
-      }
-    },
-    onDragging (dragObj) {
-      const index = this.itemArray.findIndex(e => e.uid === dragObj.id)
-      index !== -1 && this.$set(this.itemArray, index, Object.assign(this.itemArray[index], { x: dragObj.x, y: dragObj.y }))
+      console.log('ctrl', e)
     },
     toggleShow (type) {
       if (type === 'left') {
@@ -122,7 +101,6 @@ export default {
       position: relative
       flex-shrink: 0
       color: #5b6b73
-      flex-direction: column
       font-size: 12px
       box-shadow: 0 2px 30px 0 hsla(0,0%,83.9%,.5)
       z-index: 4
@@ -145,7 +123,7 @@ export default {
       background: #fff
     .left-sider-enter,.left-sider-leave-to,.right-sider-enter,.right-sider-leave-to
       opacity: 0
-      transform: translateX(100px)
+      width: 0px
     .left-sider-enter-active,.left-sider-leave-active,.right-sider-enter-active,.right-sider-leave-active
-      transition: all 0.4s ease-in-out
+      transition: all 0.4s ease
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <div style="width:100%;height:100%" ref="basePie" />
+  <div style="width:100%;height:100%" ref="baseColumn" />
 </template>
 <script>
 import { isEmpty, cloneDeep } from 'lodash'
-import { Pie } from '@antv/g2plot'
-import { basePie } from './BaseConfig'
+import { Column } from '@antv/g2plot'
+import { baseColumn } from './BaseConfig'
 export default {
-  name: 'BasePie',
+  name: 'BaseColumn',
   props: {
     customConfig: {
       type: Object,
@@ -18,7 +18,7 @@ export default {
     return {}
   },
   created () {
-    this.config = cloneDeep(basePie)
+    this.config = cloneDeep(baseColumn)
     this.chartObj = null
     this.mergeConfig()
   },
@@ -32,7 +32,7 @@ export default {
       }
     },
     drawChart () {
-      this.chartObj = new Pie(this.$refs.basePie, this.config)
+      this.chartObj = new Column(this.$refs.baseColumn, this.config)
       this.chartObj.render()
     },
     updateConfig () {

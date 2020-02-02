@@ -5,7 +5,7 @@
       'resizing': resizing,
       'draggable': draggable,
       'resizable': resizable
-    }, className]" @mousedown="elementDown" @touchstart="elementTouchDown" tabindex="0">
+    }, className]" @mousedown="elementDown" @touchstart="elementTouchDown">
     <!-- 句柄 -->
     <div v-for="handle in actualHandles" :key="handle" :class="['handle', 'handle-' + handle]" :style="{display: enabled ? 'block' : 'none'}" @mousedown.stop.prevent="handleDown(handle, $event)" @touchstart.stop.prevent="handleTouchDown(handle, $event)">
       <slot :name="handle"></slot>
@@ -566,8 +566,7 @@ export default {
       this.rawRight = mouseClickPosition.right + deltaX
 
       this.snapCheck()
-
-      this.$emit('dragging', { id: this.id, x: this.rawLeft, y: this.rawTop })
+      this.$emit('dragging', { uid: this.id, x: this.rawLeft, y: this.rawTop, w: this.width, h: this.height, rotato: this.angle })
     },
     // 控制柄移动
     handleMove (e) {
@@ -594,8 +593,7 @@ export default {
           this.rawLeft = mouseClickPosition.left - deltaX
         }
       }
-      console.log(this.rawTop, this.rawRight, this.rawBottom, this.rawLeft)
-      this.$emit('resizing', this.left, this.top, this.width, this.height, this.angle)
+      this.$emit('resizing', { uid: this.id, x: this.rawLeft, y: this.rawTop, w: this.width, h: this.height, rotato: this.angle })
     },
     // 从控制柄松开
     async handleUp (e) {
@@ -871,6 +869,7 @@ export default {
         // top: this.top + 'px',
         // left: this.left + 'px',
         transform: `translate(${this.left}px, ${this.top}px) rotate(${this.angle}deg)`,
+        // transform: `rotate(${this.angle}deg)`,
         width: this.width + 'px',
         height: this.height + 'px',
         zIndex: this.zIndex,

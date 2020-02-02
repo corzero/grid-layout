@@ -140,13 +140,15 @@ export default {
     },
     rwStyle () {
       const hContainer = {
-        width: `calc(100% - ${this.thick}px)`,
+        // width: `calc(100% - ${this.thick}px)`,
+        width: `${this.width}px`,
         height: `${this.thick}px`
         // left: `${this.thick}` + 'px'
       }
       const vContainer = {
         width: `${this.thick}px`,
-        height: `calc(100% - ${this.thick}px)`
+        // height: `calc(100% - ${this.thick}px)`
+        height: `${this.height}px`
         // top: `${this.thick}` + 'px'
       }
       return this.vertical ? vContainer : hContainer
