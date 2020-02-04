@@ -68,8 +68,8 @@ const dashboard = {
       index > -1 &&
         state.widget.splice(index, 1, assign(state.widget[index], item))
     },
-    updateWidgetConf (state, { widgetId, config }) {
-      const index = state.widget.findIndex(e => e.uid === widgetId)
+    updateWidgetConf (state, { uid, config }) {
+      const index = state.widget.findIndex(e => e.uid === uid)
       assign(state.widget[index].config, config)
       index > -1 &&
         state.widget.splice(index, 1, state.widget[index])

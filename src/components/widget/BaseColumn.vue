@@ -8,6 +8,10 @@ import { baseColumn } from './BaseConfig'
 export default {
   name: 'BaseColumn',
   props: {
+    id: {
+      type: String,
+      require: true
+    },
     customConfig: {
       type: Object,
       default: () => { }
@@ -18,26 +22,23 @@ export default {
     return {}
   },
   created () {
-    this.config = cloneDeep(baseColumn)
+    this.config = isEmpty(this.customConfig) ? cloneDeep(baseColumn) : this.customConfig
     this.chartObj = null
-    this.mergeConfig()
   },
   mounted () {
     this.drawChart()
+    this.$EventBus.$on('updateTool', this.updateConfig)
   },
   methods: {
-    mergeConfig () {
-      if (!isEmpty(this.customConfig)) {
-
-      }
-    },
     drawChart () {
       this.chartObj = new Column(this.$refs.baseColumn, this.config)
       this.chartObj.render()
     },
-    updateConfig () {
-      this.mergeConfig()
-      this.chartObj.render()
+    updateConfig (id) {
+      if (id === this.id) {
+        this.chartObj.updateConfig(this.customConfig)
+        this.chartObj.render()
+      }
     },
     getData () {
 

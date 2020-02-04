@@ -5,16 +5,16 @@
         <div class="collapse-tool">
           <div class="base-tool tool-item">
             <label>内容</label>
-            <el-input v-model="config.title.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+            <el-input v-model="config.title.text" controls-position="right" size="mini" @blur="handleUpdate" />
           </div>
         </div>
         <div class="collapse-tool">
           <div class="base-tool tool-item">
             <label>内容</label>
-            <el-input v-model="config.title.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+            <el-input v-model="config.title.text" controls-position="right" size="mini" @blur="handleUpdate" />
           </div>
         </div>
-        <el-collapse v-model="activeConfig" @change="handleChange">
+        <el-collapse v-model="activeConfig">
           <el-collapse-item class="collapse-item" :disabled="!config.title.visible" :name="0">
             <template slot="title">
               <span class="collapse-title">标题</span>
@@ -23,7 +23,7 @@
             <div class="collapse-tool">
               <div class="tool-item">
                 <label>内容</label>
-                <el-input v-model="config.title.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input v-model="config.title.text" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -35,7 +35,7 @@
             <div class="collapse-tool">
               <div class="tool-item">
                 <label>内容</label>
-                <el-input v-model="config.description.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input v-model="config.description.text" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -47,7 +47,7 @@
             <div class="collapse-tool">
               <div class="tool-item">
                 <label>位置</label>
-                <el-input v-model="config.legend.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input v-model="config.legend.text" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
               <div class="tool-item">
                 <label>分页</label>
@@ -55,11 +55,11 @@
               </div>
               <div class="tool-item">
                 <label>X轴偏移</label>
-                <el-input-number v-model="config.legend.offsetX" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input-number v-model="config.legend.offsetX" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
               <div class="tool-item">
                 <label>Y轴偏移</label>
-                <el-input-number v-model="config.legend.offsetY" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input-number v-model="config.legend.offsetY" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -79,15 +79,15 @@
               </div>
               <div class="tool-item">
                 <label>整体偏移</label>
-                <el-input-number v-model="config.label.offset" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input-number v-model="config.label.offset" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
               <div class="tool-item">
                 <label>X轴偏移</label>
-                <el-input-number v-model="config.label.offsetX" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input-number v-model="config.label.offsetX" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
               <div class="tool-item">
                 <label>Y轴偏移</label>
-                <el-input-number v-model="config.label.offsetY" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input-number v-model="config.label.offsetY" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -111,7 +111,7 @@
             <div class="collapse-tool">
               <div class="tool-item">
                 <label>内容</label>
-                <el-input v-model="config.xAxis.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input v-model="config.xAxis.text" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -123,7 +123,7 @@
             <div class="collapse-tool">
               <div class="tool-item">
                 <label>内容</label>
-                <el-input v-model="config.yAxis.text" controls-position="right" size="mini" @change="handleUpdate" @blur="handleUpdate" />
+                <el-input v-model="config.yAxis.text" controls-position="right" size="mini" @blur="handleUpdate" />
               </div>
             </div>
           </el-collapse-item>
@@ -168,10 +168,8 @@ export default {
     ...mapMutations(['updateWidgetConf']),
     handleUpdate () {
       console.log(this.config)
-      // this.updateWidgetConf({ uid: this.widgetId, config: this.config })
-    },
-    handleChange (v) {
-      console.log(v)
+      this.updateWidgetConf({ uid: this.widgetId, config: this.config })
+      this.$EventBus.$emit('updateTool', this.widgetId)
     },
     handleSwitch (v, i) {
       if (!v) {

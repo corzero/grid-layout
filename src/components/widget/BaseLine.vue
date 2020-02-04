@@ -8,9 +8,12 @@ import { baseLine } from './BaseConfig'
 export default {
   name: 'BaseLine',
   props: {
+    id: {
+      type: String,
+      require: true
+    },
     customConfig: {
-      type: Object,
-      default: () => { }
+      type: Object
     },
     theme: String
   },
@@ -18,26 +21,23 @@ export default {
     return {}
   },
   created () {
-    this.config = cloneDeep(baseLine)
+    this.config = isEmpty(this.customConfig) ? cloneDeep(baseLine) : this.customConfig
     this.chartObj = null
-    this.mergeConfig()
   },
   mounted () {
     this.drawChart()
+    this.$EventBus.$on('updateTool', this.updateConfig)
   },
   methods: {
-    mergeConfig () {
-      if (!isEmpty(this.customConfig)) {
-
-      }
-    },
     drawChart () {
       this.chartObj = new Line(this.$refs.baseLine, this.config)
       this.chartObj.render()
     },
-    updateConfig () {
-      this.mergeConfig()
-      this.chartObj.render()
+    updateConfig (id) {
+      if (id === this.id) {
+        this.chartObj.updateConfig(this.customConfig)
+        this.chartObj.render()
+      }
     },
     getData () {
 
@@ -45,6 +45,7 @@ export default {
   },
   destroyed () {
     this.chartObj.destroy()
+    this.$EventBus.$off('updateTool')
   }
 }
 </script>

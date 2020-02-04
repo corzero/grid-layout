@@ -10,7 +10,7 @@
       <gridLayout class="canvas-console" :canvasConf="canvas" :itemList="widget" @keyup.ctrl="onCtrlClick" @scaleChange="scaleChange" @toggleShow="toggleShow" @addWidget="addWidget" @updateConfig="updateWidget" @onActivated="handleActivated" @onDeactivated="handleDeactivated"/>
       <transition name="right-sider">
         <div>
-          <component :is="rightTool" :widgetId='active' :class="rightTool === 'GlobalConfig' ? 'canvas-right-sider-global' : 'canvas-right-sider-widget'" v-show="showRight" />
+          <component :is="rightTool" v-show="showRight" :widgetId='active' :class="rightTool === 'GlobalConfig' ? 'canvas-right-sider-global' : 'canvas-right-sider-widget'"  @updateTool="updateTool"/>
         </div>
       </transition>
     </div>
@@ -73,6 +73,9 @@ export default {
     handleDeactivated () {
       this.active = null
       this.rightTool = 'GlobalConfig'
+    },
+    updateTool ({ id, config }) {
+
     },
     onCtrlClick (e) {
       console.log('ctrl', e)

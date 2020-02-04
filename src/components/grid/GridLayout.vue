@@ -48,7 +48,7 @@
       <!-- 画布 -->
       <div :style="style" class="grid-canvas" ref="canvasRef" @contextmenu.prevent="rightClick">
         <gridItem v-for="e in itemList" :key="e.uid" :id="e.uid" :x="e.x" :y="e.y" :z="e.z" :w="e.w" :h="e.h" :zoom="scale" :active="active==e.uid" :parent="false" :debug="false" :min-width="200" :min-height="200" :isConflictCheck="false" :snap="false" :snapTolerance="10" @activated="onActivated" @deactivated="onDeactivated" @dragging="onDragging" @resizing="onResizing">
-          <component :is="e.widgetName" />
+          <component :is="e.widgetName" :id="e.uid" :customConfig="e.config" />
         </gridItem>
       </div>
       <!-- 画布END -->

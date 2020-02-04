@@ -1,8 +1,8 @@
 const baseLine = {
   padding: 'auto',
   forceFit: true,
-  xField: 'year',
-  yField: 'value',
+  'xField': 'x',
+  'yField': 'y',
   title: {
     visible: true,
     text: '配置折线数据点样式'
@@ -12,15 +12,56 @@ const baseLine = {
     text: '自定义配置趋势线上数据点的样式'
   },
   data: [
-    { year: '1991', value: 3 },
-    { year: '1992', value: 4 },
-    { year: '1993', value: 3.5 },
-    { year: '1994', value: 5 },
-    { year: '1995', value: 4.9 },
-    { year: '1996', value: 6 },
-    { year: '1997', value: 7 },
-    { year: '1998', value: 9 },
-    { year: '1999', value: 13 }
+    {
+      x: '2019-03',
+      y: 385,
+      serie: 'Paris'
+    },
+    {
+      x: '2019-04',
+      y: 888,
+      serie: 'Paris'
+    },
+    {
+      x: '2019-05',
+      y: 349,
+      serie: 'Paris'
+    },
+    {
+      x: '2019-06',
+      y: 468,
+      serie: 'Paris'
+    },
+    {
+      x: '2019-07',
+      y: 477,
+      serie: 'Paris'
+    },
+    {
+      x: '2019-03',
+      y: 291,
+      serie: 'London'
+    },
+    {
+      x: '2019-04',
+      y: 484,
+      serie: 'London'
+    },
+    {
+      x: '2019-05',
+      y: 293,
+      serie: 'London'
+    },
+    {
+      x: '2019-06',
+      y: 147,
+      serie: 'London'
+    },
+    {
+      x: '2019-07',
+      y: 618,
+      serie: 'London'
+    }
   ],
   xAxis: {
     grid: {
@@ -93,8 +134,7 @@ const basePie = {
     offsetY: null
   },
   tooltip: {
-    visible: true,
-    shared: true
+    visible: true
   },
   label: {
     visible: true,
