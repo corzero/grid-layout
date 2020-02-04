@@ -257,18 +257,18 @@ export default {
 
     this.settingAttribute()
 
-    addEvent(document.documentElement, 'mousedown', this.deselect)
-    addEvent(document.documentElement, 'touchend touchcancel', this.deselect)
+    addEvent(document.querySelector('.grid-canvas'), 'mousedown', this.deselect)
+    addEvent(document.querySelector('.grid-canvas'), 'touchend touchcancel', this.deselect)
 
     addEvent(window, 'resize', this.checkParentSize)
   },
   beforeDestroy () {
-    removeEvent(document.documentElement, 'mousedown', this.deselect)
-    removeEvent(document.documentElement, 'touchstart', this.handleUp)
-    removeEvent(document.documentElement, 'mousemove', this.move)
-    removeEvent(document.documentElement, 'touchmove', this.move)
-    removeEvent(document.documentElement, 'mouseup', this.handleUp)
-    removeEvent(document.documentElement, 'touchend touchcancel', this.deselect)
+    removeEvent(document.querySelector('.grid-canvas'), 'mousedown', this.deselect)
+    removeEvent(document.querySelector('.grid-canvas'), 'touchstart', this.handleUp)
+    removeEvent(document.querySelector('.grid-canvas'), 'mousemove', this.move)
+    removeEvent(document.querySelector('.grid-canvas'), 'touchmove', this.move)
+    removeEvent(document.querySelector('.grid-canvas'), 'mouseup', this.handleUp)
+    removeEvent(document.querySelector('.grid-canvas'), 'touchend touchcancel', this.deselect)
 
     removeEvent(window, 'resize', this.checkParentSize)
   },
@@ -349,7 +349,7 @@ export default {
           this.enabled = true
 
           this.$emit('activated', this.id)
-          this.$emit('update:active', true)
+          // this.$emit('update:active', true)
         }
 
         if (this.draggable) {
@@ -368,8 +368,8 @@ export default {
           this.bounds = this.calcDragLimits()
         }
 
-        addEvent(document.documentElement, eventsFor.move, this.move)
-        addEvent(document.documentElement, eventsFor.stop, this.handleUp)
+        addEvent(document.querySelector('.grid-canvas'), eventsFor.move, this.move)
+        addEvent(document.querySelector('.grid-canvas'), eventsFor.stop, this.handleUp)
       }
     },
     // 计算移动范围
@@ -395,10 +395,10 @@ export default {
           this.enabled = false
 
           this.$emit('deactivated')
-          this.$emit('update:active', false)
+          // this.$emit('update:active', false)
         }
 
-        removeEvent(document.documentElement, eventsFor.move, this.handleMove)
+        removeEvent(document.querySelector('.grid-canvas'), eventsFor.move, this.handleMove)
       }
 
       this.resetBoundsAndMouseState()
@@ -436,8 +436,8 @@ export default {
 
       this.bounds = this.calcResizeLimits()
 
-      addEvent(document.documentElement, eventsFor.move, this.handleMove)
-      addEvent(document.documentElement, eventsFor.stop, this.handleUp)
+      addEvent(document.querySelector('.grid-canvas'), eventsFor.move, this.handleMove)
+      addEvent(document.querySelector('.grid-canvas'), eventsFor.stop, this.handleUp)
     },
     // 计算调整大小范围
     calcResizeLimits () {
@@ -621,7 +621,7 @@ export default {
         this.$emit('dragstop', this.left, this.top)
       }
       this.resetBoundsAndMouseState()
-      removeEvent(document.documentElement, eventsFor.move, this.handleMove)
+      removeEvent(document.querySelector('.grid-canvas'), eventsFor.move, this.handleMove)
     },
     // 对齐网格
     snapToGrid (grid, pendingX, pendingY) {

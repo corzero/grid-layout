@@ -9,36 +9,36 @@
           <template slot="title">
             <span class="collapse-title">线图</span>
           </template>
-          <div class="widget-item" v-for="e in 3" :key="e" draggable="true" @dragstart="startDragWidget($event,e)">
-            <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" height="45px">
-            <p style="text-align: center;">好吃的汉堡</p>
+          <div class="widget-item" v-for="e in lineImg" :key="e.name" draggable="true" @dragstart="startDragWidget($event,e.name)">
+            <img :src="e.url" width="100%">
+            <p style="text-align: center;">{{e.desc}}</p>
           </div>
         </el-collapse-item>
         <el-collapse-item class="collapse-item">
           <template slot="title">
             <span class="collapse-title">柱状图</span>
           </template>
-          <div class="widget-item" v-for="e in 3" :key="e" draggable="true" @dragstart="startDragWidget($event,e)">
-            <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" height="45px">
-            <p style="text-align: center;">好吃的汉堡</p>
+          <div class="widget-item" v-for="e in columnImg" :key="e.name" draggable="true" @dragstart="startDragWidget($event,e.name)">
+            <img :src="e.url" width="100%">
+            <p style="text-align: center;">{{e.desc}}</p>
           </div>
         </el-collapse-item>
         <el-collapse-item class="collapse-item">
           <template slot="title">
             <span class="collapse-title">饼图</span>
           </template>
-          <div class="widget-item" v-for="e in 3" :key="e" draggable="true" @dragstart="startDragWidget($event,e)">
-            <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" height="45px">
-            <p style="text-align: center;">好吃的汉堡</p>
+          <div class="widget-item" v-for="e in pieImg" :key="e.name" draggable="true" @dragstart="startDragWidget($event,e.name)">
+            <img :src="e.url" width="100%">
+            <p style="text-align: center;">{{e.desc}}</p>
           </div>
         </el-collapse-item>
         <el-collapse-item class="collapse-item">
           <template slot="title">
             <span class="collapse-title">仪表盘</span>
           </template>
-          <div class="widget-item" v-for="e in 3" :key="e" draggable="true" @dragstart="startDragWidget($event,e)">
-            <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" height="45px">
-            <p style="text-align: center;">好吃的汉堡</p>
+          <div class="widget-item" v-for="e in gaugeImg" :key="e.name" draggable="true" @dragstart="startDragWidget($event,e.anme)">
+            <img :src="e.url" width="100%">
+            <p style="text-align: center;">{{e.desc}}</p>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -65,10 +65,29 @@ export default {
   name: 'LeftSider',
   components: {
   },
+  data () {
+    return {
+      lineImg: [{
+        name: 'BaseLine',
+        desc: '基础线图',
+        url: require('../assets/widget/baseLine.png')
+      }],
+      pieImg: [{
+        name: 'BasePie',
+        desc: '基础饼图',
+        url: require('../assets/widget/basePie.png')
+      }],
+      columnImg: [{
+        name: 'BaseColumn',
+        desc: '基础柱状图',
+        url: require('../assets/widget/baseColumn.png')
+      }],
+      gaugeImg: []
+    }
+  },
   methods: {
     startDragWidget (e, name) {
-      console.log('1111', e, name)
-      e.dataTransfer.setData('name', 'asdasdsadasd')
+      e.dataTransfer.setData('name', name)
     }
   }
 }
@@ -85,8 +104,10 @@ export default {
       padding: 0 5px
       .collapse-title
         font-weight: bold
-        flex: 1 0 90%
+        flex: 1 0 67%
         order: 1
+      .tool-switch
+        order: 2
       .el-collapse-item__header
         height: 35px
         line-height: 35px
@@ -95,7 +116,7 @@ export default {
         font-size: 12px
       .el-collapse-item__content
         .widget-item
-          cursor: pointer
+          cursor: grab
           width: 45%
           display: inline-block
           text-align: center

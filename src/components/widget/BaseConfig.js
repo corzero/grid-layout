@@ -1,4 +1,8 @@
 const baseLine = {
+  padding: 'auto',
+  forceFit: true,
+  xField: 'year',
+  yField: 'value',
   title: {
     visible: true,
     text: '配置折线数据点样式'
@@ -18,13 +22,40 @@ const baseLine = {
     { year: '1998', value: 9 },
     { year: '1999', value: 13 }
   ],
-  padding: 'auto',
-  forceFit: true,
-  xField: 'year',
-  yField: 'value',
+  xAxis: {
+    grid: {
+      visible: true
+    },
+    title: {
+      visible: true,
+      text: 'asdas'
+    }
+  },
+  yAxis: {
+    line: {
+      visible: true
+    },
+    tickLine: {
+      visible: true
+    },
+    title: {
+      visible: true,
+      text: 'asd'
+    }
+  },
+  legend: {
+    visible: true,
+    flipPage: true,
+    text: '图例',
+    offsetX: null,
+    offsetY: null
+  },
   label: {
     visible: true,
-    type: 'point'
+    type: 'point',
+    offset: null,
+    offsetX: null,
+    offsetY: null
   },
   point: {
     visible: true,
@@ -35,19 +66,44 @@ const baseLine = {
       stroke: '#2593fc',
       lineWidth: 2
     }
+  },
+  tooltip: {
+    visible: true,
+    shared: true
   }
 }
 const basePie = {
   forceFit: true,
+  radius: 0.57,
+  angleField: 'value',
+  colorField: 'type',
   title: {
     visible: true,
-    text: '多色饼图'
+    text: '饼图'
   },
   description: {
     visible: true,
-    text: 'desc'
+    text: '一个简单的饼图'
   },
-  radius: 0.8,
+  legend: {
+    visible: true,
+    position: 'right-top',
+    flipPage: false,
+    offsetX: null,
+    offsetY: null
+  },
+  tooltip: {
+    visible: true,
+    shared: true
+  },
+  label: {
+    visible: true,
+    type: 'spider',
+    offset: null,
+    offsetX: null,
+    offsetY: null
+  },
+  color: ['#5B8FF9', '#5AD8A6', '#2a5bb1', '#F6BD16', '#E8684A'],
   data: [
     {
       type: '分类一',
@@ -73,64 +129,98 @@ const basePie = {
       type: '其它',
       value: 5
     }
-  ],
-  angleField: 'value',
-  colorField: 'type',
-  label: {
-    visible: true,
-    type: 'inner'
-  }
+  ]
 }
 const baseColumn = {
+  forceFit: true,
+  xField: 'x',
+  yField: 'y',
+  columnSize: 40,
   title: {
     visible: true,
-    text: '基础柱状图'
+    text: '柱形图'
   },
-  forceFit: true,
+  description: {
+    visible: true,
+    text: '一个基础的柱形图'
+  },
+  legend: {
+    visible: true,
+    flipPage: false,
+    offsetX: null,
+    offsetY: null
+  },
+  tooltip: {
+    visible: true,
+    shared: true
+  },
+  xAxis: {
+    visible: true,
+    grid: {
+      visible: true
+    },
+    tickLine: {
+      visible: true
+    },
+    label: {
+      offset: 5,
+      offsetX: 1,
+      offsetY: 2
+    },
+    title: {
+      text: '日期'
+    }
+  },
+  yAxis: {
+    visible: true,
+    line: {
+      visible: true
+    },
+    tickLine: {
+      visible: true
+    },
+    label: {
+      offset: 1,
+      offsetX: 2,
+      offsetY: 3
+    },
+    title: {
+      text: '数值'
+    }
+  },
+  label: {
+    visible: true,
+    position: 'top',
+    offset: 1,
+    offsetX: 2,
+    offsetY: 3
+  },
   data: [
     {
-      type: '家具家电',
-      sales: 38
+      x: '2019-03',
+      y: 385,
+      serie: 'default'
     },
     {
-      type: '粮油副食',
-      sales: 52
+      x: '2019-04',
+      y: 888,
+      serie: 'default'
     },
     {
-      type: '生鲜水果',
-      sales: 61
+      x: '2019-05',
+      y: 349,
+      serie: 'default'
     },
     {
-      type: '美容洗护',
-      sales: 145
+      x: '2019-06',
+      y: 468,
+      serie: 'default'
     },
     {
-      type: '母婴用品',
-      sales: 48
-    },
-    {
-      type: '进口食品',
-      sales: 38
-    },
-    {
-      type: '食品饮料',
-      sales: 38
-    },
-    {
-      type: '家庭清洁',
-      sales: 38
+      x: '2019-07',
+      y: 477,
+      serie: 'default'
     }
-  ],
-  padding: 'auto',
-  xField: 'type',
-  yField: 'sales',
-  meta: {
-    type: {
-      alias: '类别'
-    },
-    sales: {
-      alias: '销售额(万)'
-    }
-  }
+  ]
 }
 module.exports = { baseLine, basePie, baseColumn }

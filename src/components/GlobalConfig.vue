@@ -39,6 +39,7 @@
       <el-tab-pane label="全部配置">全部配置</el-tab-pane>
     </el-tabs>
   </div>
+
 </template>
 <script>
 import { cloneDeep } from 'lodash'

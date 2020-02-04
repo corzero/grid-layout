@@ -1,4 +1,5 @@
 import { assign } from 'lodash'
+import { v1 } from 'uuid'
 const dashboard = {
   namespaced: true,
   state: {
@@ -16,37 +17,48 @@ const dashboard = {
     },
     widget: [
       {
-        uid: 1111111,
+        uid: '53f9e901-464b-11ea-ae7e-990168c9b48d',
         widgetName: 'BaseLine',
         x: 0,
         y: 0,
         z: 1,
-        w: 200,
-        h: 200
+        w: 300,
+        h: 200,
+        config: {}
       },
       {
-        uid: 2222222222,
+        uid: '527cbee1-464b-11ea-ae7e-990168c9b48d',
         widgetName: 'BasePie',
-        x: 210,
+        x: 310,
         y: 0,
         z: 1,
-        w: 200,
-        h: 200
+        w: 300,
+        h: 200,
+        config: {}
       },
       {
-        uid: 3333333333,
+        uid: '50fef881-464b-11ea-ae7e-990168c9b48d',
         widgetName: 'BaseColumn',
-        x: 420,
+        x: 620,
         y: 0,
         z: 1,
-        w: 200,
-        h: 200
+        w: 300,
+        h: 200,
+        config: {}
       }
     ]
   },
   mutations: {
     addWidget (state, config) {
-      state.widget.push(config)
+      let baseWidget = {
+        uid: v1(),
+        w: 300,
+        h: 200,
+        z: 1,
+        config: {}
+      }
+      console.log(v1())
+      state.widget.push(assign(baseWidget, config))
     },
     updateGlobal (state, config) {
       state.global = assign(state.global, config)
@@ -56,17 +68,28 @@ const dashboard = {
       index > -1 &&
         state.widget.splice(index, 1, assign(state.widget[index], item))
     },
+    updateWidgetConf (state, { widgetId, config }) {
+      const index = state.widget.findIndex(e => e.uid === widgetId)
+      assign(state.widget[index].config, config)
+      index > -1 &&
+        state.widget.splice(index, 1, state.widget[index])
+    },
     deleteWidget (state, uid) {
       const index = state.widget.findIndex(e => e.uid === uid)
       index > -1 && state.widget.splice(index, 1)
-    },
-    resize () {}
+    }
   },
   actions: {},
   getters: {
     canvas (state) {
       const { title, interval, ...canvas } = state.global
       return canvas
+    },
+    getConfigById (state, id) {
+      return id => state.widget.find(e => e.uid === id)
+    },
+    getWidgetToolById (state, id) {
+      return id => state.widget.find(e => e.uid === id).config
     }
   }
 }

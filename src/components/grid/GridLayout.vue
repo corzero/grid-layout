@@ -39,14 +39,14 @@
         </el-tooltip>
       </el-button-group>
     </div>
-    <div class="grid-container" :class="isLattice ? 'lattice' : ''" @contextmenu.prevent="rightClick" @dragover="dragOver($event)" @drop="dropEnd($event)">
+    <div class="grid-container" :class="isLattice ? 'lattice' : ''" @dragover="dragOver($event)" @drop="dropEnd($event)">
       <!-- 刻度尺 -->
       <GridRuler :vertical="false" :width="canvasConf.width" :height="ruler.thick" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startX" :scale="zoom" />
       <GridRuler :vertical="true" :width="ruler.thick" :height="canvasConf.height" :isShowReferLine="ruler.isShowReferLine" :start="ruler.startY" :scale="zoom" />
       <a class="corner" @click="ruler.isShowReferLine = !ruler.isShowReferLine"><i class="el-icon-view" /></a>
       <!-- 刻度尺END -->
       <!-- 画布 -->
-      <div :style="style" class="grid-canvas" ref="canvasRef">
+      <div :style="style" class="grid-canvas" ref="canvasRef" @contextmenu.prevent="rightClick">
         <gridItem v-for="e in itemList" :key="e.uid" :id="e.uid" :x="e.x" :y="e.y" :z="e.z" :w="e.w" :h="e.h" :zoom="scale" :active="active==e.uid" :parent="false" :debug="false" :min-width="200" :min-height="200" :isConflictCheck="false" :snap="false" :snapTolerance="10" @activated="onActivated" @deactivated="onDeactivated" @dragging="onDragging" @resizing="onResizing">
           <component :is="e.widgetName" />
         </gridItem>
@@ -169,7 +169,7 @@ export default {
     onActivated (id) {
       if (!this.active) {
         this.active = id
-        console.log('hhh', id)
+        this.$emit('onActivated', id)
       }
     },
     onDeactivated () {
@@ -178,6 +178,7 @@ export default {
         show: null,
         offsetXY: '0px, 0px'
       }
+      this.$emit('onDeactivated')
     },
     onDragging: debounce(function (position) {
       this.$emit('updateConfig', position)
@@ -188,22 +189,21 @@ export default {
     rightClick (e) {
       console.log(e)
       // 点击item
-      if (e.toElement._prevClass.includes('draggable')) {
-        this.rightMenu = {
-          show: 'item',
-          offsetXY: `${e.layerX}px,${e.layerY}px`
-        }
-      } else {
+      if (e.target.className.includes('grid-canvas')) {
         this.rightMenu = {
           show: 'canvas',
           offsetXY: `${e.layerX}px,${e.layerY}px`
         }
+      } else {
+        this.rightMenu = {
+          show: 'item',
+          offsetXY: `${e.layerX}px,${e.layerY}px`
+        }
       }
-      console.log(e)
     },
     dropEnd (e) {
-      const type = e.dataTransfer.getData('name')
-      console.log('drop', e, type)
+      const widgetName = e.dataTransfer.getData('name')
+      this.$emit('addWidget', { widgetName, x: e.offsetX, y: e.offsetY })
     },
     dragOver (e) {
       e.preventDefault()
